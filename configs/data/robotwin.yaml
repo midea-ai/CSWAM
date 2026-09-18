@@ -1,0 +1,100 @@
+# Raw RoboTwin contract shared by the stats and text-cache entrypoints.
+# Keep these paths aligned with data.train.dataset_wo_subtask_dirs in both
+# public CSWAM RoboTwin training configs.
+num_frames: 33
+obs_size: 33
+action_size: 32
+global_sample_stride: 1
+
+shape_meta:
+  images:
+    - key: cam_high
+      raw_shape: [3, 480, 640]
+      shape: [3, 240, 320]
+    - key: cam_left_wrist
+      raw_shape: [3, 480, 640]
+      shape: [3, 240, 320]
+    - key: cam_right_wrist
+      raw_shape: [3, 480, 640]
+      shape: [3, 240, 320]
+  action:
+    - key: default
+      raw_shape: 14
+      shape: 14
+  state:
+    - key: default
+      raw_shape: 14
+      shape: 14
+
+processor:
+  _target_: fastwam.datasets.lerobot.processors.fastwam_processor.FastWAMProcessor
+  shape_meta: ${shape_meta}
+  num_obs_steps: ${num_frames}
+  num_output_cameras: 3
+  action_output_dim: 14
+  proprio_output_dim: 14
+  action_state_transforms: null
+  use_stepwise_action_norm: false
+  norm_default_mode: z-score
+  norm_exception_mode: null
+  action_state_merger:
+    _target_: fastwam.datasets.lerobot.transforms.action_state_merger.ConcatLeftAlign
+    action_target_dim: 14
+    state_target_dim: 14
+  train_transforms: null
+  val_transforms: null
+
+dataset_dirs: []
+dataset_w_subtask_dirs: []
+dataset_wo_subtask_dirs: [
+  "/efs/share/1919650160032350208/projects/foundation_model/datasets/official_robotwin2/lerobot_v30_eef/grab_roller-demo_clean-50",
+  "/efs/share/1919650160032350208/projects/foundation_model/datasets/official_robotwin2/lerobot_v30_eef/stack_blocks_two-demo_clean-50",
+  "/efs/share/1919650160032350208/projects/foundation_model/datasets/official_robotwin2/lerobot_v30_eef/open_microwave-demo_clean-50",
+  "/efs/share/1919650160032350208/projects/foundation_model/datasets/official_robotwin2/lerobot_v30_eef/adjust_bottle-demo_clean-50",
+  "/efs/share/1919650160032350208/projects/foundation_model/datasets/official_robotwin2/lerobot_v30_eef/click_bell-demo_clean-50",
+  "/efs/share/1919650160032350208/projects/foundation_model/datasets/official_robotwin2/lerobot_v30_eef/place_object_scale-demo_clean-50",
+  "/efs/share/1919650160032350208/projects/foundation_model/datasets/official_robotwin2/lerobot_v30_eef/dump_bin_bigbin-demo_clean-50",
+  "/efs/share/1919650160032350208/projects/foundation_model/datasets/official_robotwin2/lerobot_v30_eef/place_empty_cup-demo_clean-50",
+  "/efs/share/1919650160032350208/projects/foundation_model/datasets/official_robotwin2/lerobot_v30_eef/press_stapler-demo_clean-50",
+  "/efs/share/1919650160032350208/projects/foundation_model/datasets/official_robotwin2/lerobot_v30_eef/handover_mic-demo_clean-50",
+  "/efs/share/1919650160032350208/projects/foundation_model/datasets/official_robotwin2/lerobot_v30_eef/place_phone_stand-demo_clean-50",
+  "/efs/share/1919650160032350208/projects/foundation_model/datasets/official_robotwin2/lerobot_v30_eef/handover_block-demo_clean-50",
+  "/efs/share/1919650160032350208/projects/foundation_model/datasets/official_robotwin2/lerobot_v30_eef/move_playingcard_away-demo_clean-50",
+  "/efs/share/1919650160032350208/projects/foundation_model/datasets/official_robotwin2/lerobot_v30_eef/pick_dual_bottles-demo_clean-50",
+  "/efs/share/1919650160032350208/projects/foundation_model/datasets/official_robotwin2/lerobot_v30_eef/place_a2b_left-demo_clean-50",
+  "/efs/share/1919650160032350208/projects/foundation_model/datasets/official_robotwin2/lerobot_v30_eef/place_bread_basket-demo_clean-50",
+  "/efs/share/1919650160032350208/projects/foundation_model/datasets/official_robotwin2/lerobot_v30_eef/place_dual_shoes-demo_clean-50",
+  "/efs/share/1919650160032350208/projects/foundation_model/datasets/official_robotwin2/lerobot_v30_eef/place_object_basket-demo_clean-50",
+  "/efs/share/1919650160032350208/projects/foundation_model/datasets/official_robotwin2/lerobot_v30_eef/click_alarmclock-demo_clean-50",
+  "/efs/share/1919650160032350208/projects/foundation_model/datasets/official_robotwin2/lerobot_v30_eef/place_can_basket-demo_clean-50",
+  "/efs/share/1919650160032350208/projects/foundation_model/datasets/official_robotwin2/lerobot_v30_eef/beat_block_hammer-demo_clean-50",
+  "/efs/share/1919650160032350208/projects/foundation_model/datasets/official_robotwin2/lerobot_v30_eef/place_fan-demo_clean-50",
+  "/efs/share/1919650160032350208/projects/foundation_model/datasets/official_robotwin2/lerobot_v30_eef/shake_bottle-demo_clean-50",
+  "/efs/share/1919650160032350208/projects/foundation_model/datasets/official_robotwin2/lerobot_v30_eef/place_bread_skillet-demo_clean-50",
+  "/efs/share/1919650160032350208/projects/foundation_model/datasets/official_robotwin2/lerobot_v30_eef/lift_pot-demo_clean-50",
+  "/efs/share/1919650160032350208/projects/foundation_model/datasets/official_robotwin2/lerobot_v30_eef/place_object_stand-demo_clean-50",
+  "/efs/share/1919650160032350208/projects/foundation_model/datasets/official_robotwin2/lerobot_v30_eef/scan_object-demo_clean-50",
+  "/efs/share/1919650160032350208/projects/foundation_model/datasets/official_robotwin2/lerobot_v30_eef/open_laptop-demo_clean-50",
+  "/efs/share/1919650160032350208/projects/foundation_model/datasets/official_robotwin2/lerobot_v30_eef/blocks_ranking_size-demo_clean-50",
+  "/efs/share/1919650160032350208/projects/foundation_model/datasets/official_robotwin2/lerobot_v30_eef/hanging_mug-demo_clean-50",
+  "/efs/share/1919650160032350208/projects/foundation_model/datasets/official_robotwin2/lerobot_v30_eef/move_stapler_pad-demo_clean-50",
+  "/efs/share/1919650160032350208/projects/foundation_model/datasets/official_robotwin2/lerobot_v30_eef/put_bottles_dustbin-demo_clean-50",
+  "/efs/share/1919650160032350208/projects/foundation_model/datasets/official_robotwin2/lerobot_v30_eef/stamp_seal-demo_clean-50",
+  "/efs/share/1919650160032350208/projects/foundation_model/datasets/official_robotwin2/lerobot_v30_eef/place_shoe-demo_clean-50",
+  "/efs/share/1919650160032350208/projects/foundation_model/datasets/official_robotwin2/lerobot_v30_eef/place_a2b_right-demo_clean-50",
+  "/efs/share/1919650160032350208/projects/foundation_model/datasets/official_robotwin2/lerobot_v30_eef/place_container_plate-demo_clean-50",
+  "/efs/share/1919650160032350208/projects/foundation_model/datasets/official_robotwin2/lerobot_v30_eef/stack_bowls_three-demo_clean-50",
+  "/efs/share/1919650160032350208/projects/foundation_model/datasets/official_robotwin2/lerobot_v30_eef/place_cans_plasticbox-demo_clean-50",
+  "/efs/share/1919650160032350208/projects/foundation_model/datasets/official_robotwin2/lerobot_v30_eef/move_pillbottle_pad-demo_clean-50",
+  "/efs/share/1919650160032350208/projects/foundation_model/datasets/official_robotwin2/lerobot_v30_eef/put_object_cabinet-demo_clean-50",
+  "/efs/share/1919650160032350208/projects/foundation_model/datasets/official_robotwin2/lerobot_v30_eef/shake_bottle_horizontally-demo_clean-50",
+  "/efs/share/1919650160032350208/projects/foundation_model/datasets/official_robotwin2/lerobot_v30_eef/place_mouse_pad-demo_clean-50",
+  "/efs/share/1919650160032350208/projects/foundation_model/datasets/official_robotwin2/lerobot_v30_eef/rotate_qrcode-demo_clean-50",
+  "/efs/share/1919650160032350208/projects/foundation_model/datasets/official_robotwin2/lerobot_v30_eef/stack_bowls_two-demo_clean-50",
+  "/efs/share/1919650160032350208/projects/foundation_model/datasets/official_robotwin2/lerobot_v30_eef/pick_diverse_bottles-demo_clean-50",
+  "/efs/share/1919650160032350208/projects/foundation_model/datasets/official_robotwin2/lerobot_v30_eef/stack_blocks_three-demo_clean-50",
+  "/efs/share/1919650160032350208/projects/foundation_model/datasets/official_robotwin2/lerobot_v30_eef/place_burger_fries-demo_clean-50",
+  "/efs/share/1919650160032350208/projects/foundation_model/datasets/official_robotwin2/lerobot_v30_eef/blocks_ranking_rgb-demo_clean-50",
+  "/efs/share/1919650160032350208/projects/foundation_model/datasets/official_robotwin2/lerobot_v30_eef/turn_switch-demo_clean-50",
+  "/efs/share/1919650160032350208/projects/foundation_model/datasets/official_robotwin2/lerobot_v30_eef/move_can_pot-demo_clean-50"
+]

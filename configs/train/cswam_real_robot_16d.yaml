@@ -1,0 +1,237 @@
+output_dir: ./runs/cswam_real_robot_16d/default
+
+raw_action_dim: 14
+raw_proprio_dim: 14
+model_action_dim: 16
+model_proprio_dim: 16
+
+# dataloading
+batch_size: 16 #16
+num_workers: 16 #16
+
+# scheduler
+lr_scheduler_type: cosine
+learning_rate: 4.0e-4
+num_epochs: 1
+max_steps: null
+log_every: 10
+save_every: 10000
+eval_every: 10001
+eval_num_inference_steps: 10
+eval_num_samples: 32
+eval_seed: 42
+
+# training
+gradient_accumulation_steps: 1
+mixed_precision: bf16
+seed: 42
+max_grad_norm: 1.0
+weight_decay: 1.0e-2
+resume: null
+
+data:
+  train:
+    _target_: fastwam.datasets.lerobot.robot_video_dataset.RobotVideoDataset
+    dataset_dirs: []
+    dataset_w_subtask_dirs: []
+    dataset_wo_subtask_dirs: [
+      "/efs/share/1919650160032350208/projects/foundation_model/datasets/midea_real_benchmark/sort_toys/sort_toys_bread_box_left_dhl_20251222_compressed",
+      "/efs/share/1919650160032350208/projects/foundation_model/datasets/midea_real_benchmark/sort_toys/sort_toys_bread_box_left_dhl_20251224_compressed",
+      "/efs/share/1919650160032350208/projects/foundation_model/datasets/midea_real_benchmark/sort_toys/sort_toys_bread_box_left_handover_dhl_20251218_compressed",
+      "/efs/share/1919650160032350208/projects/foundation_model/datasets/midea_real_benchmark/sort_toys/sort_toys_bread_box_right_dhl_20251223_compressed",
+      "/efs/share/1919650160032350208/projects/foundation_model/datasets/midea_real_benchmark/sort_toys/sort_toys_bread_box_right_dhl_20251225_compressed",
+      "/efs/share/1919650160032350208/projects/foundation_model/datasets/midea_real_benchmark/sort_toys/sort_toys_bread_box_right_handover_dhl_20251217_compressed",
+      "/efs/share/1919650160032350208/projects/foundation_model/datasets/midea_real_benchmark/sort_toys/sort_toys_bread_only_20260624/pnpbread_tianbin_fzq_20260623",
+      "/efs/share/1919650160032350208/projects/foundation_model/datasets/midea_real_benchmark/sort_toys/sort_toys_bread_only_20260624/pnpbread_tianbin_fzq_20260624",
+      "/efs/share/1919650160032350208/projects/foundation_model/datasets/midea_real_benchmark/pnpcar_tim_20260630/pnpcar_tianbin_fzq_20260626",
+      "/efs/share/1919650160032350208/projects/foundation_model/datasets/midea_real_benchmark/givemenbread_tim_20260630/givemebread_tianbin_fzq_20260625-0",
+      "/efs/share/1919650160032350208/projects/foundation_model/datasets/midea_real_benchmark/givemenbread_tim_20260630/givemebread_tianbin_fzq_20260625-1",
+      "/efs/share/1919650160032350208/projects/foundation_model/datasets/midea_real_benchmark/givemecarrot_tim_20260702/pnp_carrot_tianbin_fzq_20260701_compressed",
+      "/efs/share/1919650160032350208/projects/foundation_model/datasets/midea_real_benchmark/givemeegg_tim_20260702/pnp_egg_tianbin_fzq_20260701_compressed",
+      "/efs/share/1919650160032350208/projects/foundation_model/datasets/midea_real_benchmark/givemepear_tim_20260702/pnp_pear_tianbin_fzq_20260701_compressed",
+      "/efs/share/1919650160032350208/projects/foundation_model/datasets/midea_real_benchmark/pnpcarrot_tim_20260702/pnp_carrot_tianbin_fzq_20260630",
+      "/efs/share/1919650160032350208/projects/foundation_model/datasets/midea_real_benchmark/pnpegg_timm_20260702/pnp_egg_tianbin_fzq_20260630",
+      "/efs/share/1919650160032350208/projects/foundation_model/datasets/midea_real_benchmark/pnppear_timm_20260702/pnp_pear_tianbin_fzq_20260630",
+      "/efs/share/1919650160032350208/projects/foundation_model/datasets/midea_real_benchmark/wipe_table_rand_tianbin_fzq_20260706_compressed"
+    ]
+    shape_meta:
+      images:
+        - key: cam_high
+          raw_shape: [3, 480, 640]
+          shape: [3, 240, 320]
+        - key: cam_left_wrist
+          raw_shape: [3, 480, 640]
+          shape: [3, 240, 320]
+        - key: cam_right_wrist
+          raw_shape: [3, 480, 640]
+          shape: [3, 240, 320]
+      action:
+        - key: default
+          raw_shape: ${raw_action_dim}
+          shape: ${raw_action_dim}
+      state:
+        - key: default
+          raw_shape: ${raw_proprio_dim}
+          shape: ${raw_proprio_dim}
+    num_frames: 33
+    global_sample_stride: 1
+    # video_tolerance_s: 2.0e-3
+    action_video_freq_ratio: 4
+    video_size: [384, 320]
+    camera_key: null
+    val_set_proportion: 0.05
+    is_training_set: true
+    norm_stats_source: pretrained
+    pretrained_norm_stats: /data/share/1919650160032350208/users/tim/sub_fastwam/wam-posttrain_dev/runs/pnp_food_car_give_food_wipe.json #runs/folding_shirts_stats.json #sort_cube_stats.json #runs/pick_place_stats.json
+    skip_padding_as_possible: false
+    concat_multi_camera: robotwin
+    load_jepa_video: true
+    jepa_history_offsets: [-28, -24, -20, -16, -12, -8, -4, 0]
+    # These are exactly Wan's future RGB offsets for 33 frames and ratio four.
+    jepa_future_offsets: [4, 8, 12, 16, 20, 24, 28, 32]
+    jepa_video_size: [384, 320]
+    processor:
+      _target_: fastwam.datasets.lerobot.processors.fastwam_processor.FastWAMProcessor
+      shape_meta: ${data.train.shape_meta}
+      num_obs_steps: ${data.train.num_frames}
+      num_output_cameras: 3
+      action_output_dim: ${model_action_dim}
+      proprio_output_dim: ${model_proprio_dim}
+      action_state_transforms: null
+      use_stepwise_action_norm: false
+      norm_default_mode: z-score
+      norm_exception_mode: null
+      action_state_merger:
+        _target_: fastwam.datasets.lerobot.transforms.action_state_merger.ConcatLeftAlign
+        action_target_dim: ${model_action_dim}
+        state_target_dim: ${model_proprio_dim}
+      train_transforms:
+        - _target_: fastwam.datasets.lerobot.transforms.image.ToTensor
+        - _target_: torchvision.transforms.Resize
+          size: [240, 320]
+      val_transforms:
+        - _target_: fastwam.datasets.lerobot.transforms.image.ToTensor
+        - _target_: torchvision.transforms.Resize
+          size: [240, 320]
+    text_embedding_cache_dir: /data/share/1919650160032350208/users/tim/sub_fastwam/subtask_wam/wam-posttrain_dev/text_embeds_cache
+    context_len: 128
+
+  val:
+    _target_: fastwam.datasets.lerobot.robot_video_dataset.RobotVideoDataset
+    dataset_dirs: ${data.train.dataset_dirs}
+    dataset_w_subtask_dirs: ${data.train.dataset_w_subtask_dirs}
+    dataset_wo_subtask_dirs: ${data.train.dataset_wo_subtask_dirs}
+    shape_meta: ${data.train.shape_meta}
+    num_frames: ${data.train.num_frames}
+    global_sample_stride: ${data.train.global_sample_stride}
+    # video_tolerance_s: ${data.train.video_tolerance_s}
+    action_video_freq_ratio: ${data.train.action_video_freq_ratio}
+    video_size: ${data.train.video_size}
+    camera_key: ${data.train.camera_key}
+    val_set_proportion: ${data.train.val_set_proportion}
+    is_training_set: false
+    norm_stats_source: ${data.train.norm_stats_source}
+    pretrained_norm_stats: ${data.train.pretrained_norm_stats}
+    skip_padding_as_possible: ${data.train.skip_padding_as_possible}
+    concat_multi_camera: ${data.train.concat_multi_camera}
+    load_jepa_video: ${data.train.load_jepa_video}
+    jepa_history_offsets: ${data.train.jepa_history_offsets}
+    jepa_future_offsets: ${data.train.jepa_future_offsets}
+    jepa_video_size: ${data.train.jepa_video_size}
+    processor: ${data.train.processor}
+    text_embedding_cache_dir: ${data.train.text_embedding_cache_dir}
+    context_len: ${data.train.context_len}
+
+model:
+  _target_: fastwam.runtime.create_cswam
+  model_id: Wan-AI/Wan2.2-TI2V-5B
+  tokenizer_model_id: Wan-AI/Wan2.1-T2V-1.3B
+  tokenizer_max_len: 128
+  load_text_encoder: false
+  proprio_dim: ${data.train.processor.proprio_output_dim}
+  redirect_common_files: true
+  # JEPA adds a dense history/future token stream; checkpoint mixed attention
+  # and the three expert blocks to keep the first training run feasible.
+  mot_checkpoint_mixed_attn: true
+  action_dit_pretrained_path: checkpoints/ActionDiT_linear_interp_Wan22_alphascale_1024hdim.pt
+  jepa_dit_pretrained_path: null
+  skip_dit_load_from_pretrain: false
+
+  video_dit_config:
+    has_image_input: false
+    patch_size: [1, 2, 2]
+    in_dim: 48
+    hidden_dim: 3072
+    ffn_dim: 14336
+    freq_dim: 256
+    text_dim: 4096
+    out_dim: 48
+    num_heads: 24
+    attn_head_dim: 128
+    num_layers: 30
+    eps: 1.0e-6
+    seperated_timestep: true
+    require_clip_embedding: false
+    require_vae_embedding: false
+    fuse_vae_embedding_in_latents: true
+    use_gradient_checkpointing: ${model.mot_checkpoint_mixed_attn}
+    video_attention_mask_mode: first_frame_causal
+    action_conditioned: false
+    action_dim: ${data.train.processor.action_output_dim}
+    action_group_causal_mask_mode: group_diagonal
+
+  action_dit_config:
+    action_dim: ${data.train.processor.action_output_dim}
+    hidden_dim: 1024
+    ffn_dim: 4096
+    num_heads: 24
+    attn_head_dim: 128
+    num_layers: 30
+    text_dim: 4096
+    freq_dim: 256
+    eps: 1.0e-6
+    use_gradient_checkpointing: ${model.mot_checkpoint_mixed_attn}
+
+  jepa_dit_config:
+    jepa_dim: 768
+    hidden_dim: 1024
+    ffn_dim: 4096
+    text_dim: 4096
+    freq_dim: 256
+    eps: 1.0e-6
+    num_heads: 24
+    attn_head_dim: 128
+    num_layers: 30
+    video_attention_mask_mode: first_frame_causal
+    use_gradient_checkpointing: ${model.mot_checkpoint_mixed_attn}
+    latent_patch_size: [1, 2, 2]
+    latent_patch_mode: flat
+    latent_num_views: 1
+    output_patch_space: dense
+
+  vjepa_repo: /efs/share/1919650160032350208/users/liutb27/tim/sub_fastwam/subtask_wam/JEPA_WAM/vjepa2
+  vjepa_ckpt: /efs/share/1919650160032350208/users/liutb27/tim/sub_fastwam/subtask_wam/JEPA_WAM/wam-posttrain_dev/checkpoints/vjepa2_1_vitb_dist_vitG_384.pt
+  vjepa_history_num_frames: 8
+  vjepa_future_num_frames: 8
+  jepa_history_offsets: ${data.train.jepa_history_offsets}
+  jepa_future_offsets: ${data.train.jepa_future_offsets}
+  vjepa_input_size: [384, 320]
+  vjepa_patch_size: 16
+  vjepa_tubelet_size: 2
+  vjepa_embed_dim: 768
+  vjepa_strict_checkpoint: false
+
+  video_scheduler:
+    train_shift: 5.0
+    infer_shift: 5.0
+    num_train_timesteps: 1000
+
+  action_scheduler:
+    train_shift: 5.0
+    infer_shift: 5.0
+    num_train_timesteps: 1000
+
+  loss:
+    lambda_video: 1.0
+    lambda_jepa: 0.4
+    lambda_action: 1.0

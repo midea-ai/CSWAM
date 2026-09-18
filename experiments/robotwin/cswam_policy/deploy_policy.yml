@@ -1,0 +1,13 @@
+policy_name: cswam_policy
+task_name: null
+task_config: null
+ckpt_setting: cswam
+seed: 0
+instruction_type: seen
+
+model_host: 127.0.0.1
+model_port: 8772
+replan_steps: 24
+model_seed: null
+connect_timeout_s: 900
+request_timeout_s: 1800
