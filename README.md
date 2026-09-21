@@ -4,7 +4,12 @@
 
 Tianbin Liu, Jian Zhu, Taiyi Su, Jianjun Zhang, Chong Ma, Zitai Huang, Weiyi Lu, and Yi Xu
 
-[Paper](https://arxiv.org/abs/2609.18462) | [Checkpoints](https://huggingface.co/Midea-AIRC/MideaWAM/tree/main)
+<a href="https://arxiv.org/abs/2609.18462">
+  <img src="https://img.shields.io/badge/arXiv-Paper-b31b1b?logo=arxiv&logoColor=white" alt="Paper">
+</a>
+<a href="https://huggingface.co/Midea-AIRC/MideaWAM/tree/main">
+  <img src="https://img.shields.io/badge/🤗%20Hugging%20Face-Checkpoints-yellow" alt="Checkpoints">
+</a>
 
 </div>
 
